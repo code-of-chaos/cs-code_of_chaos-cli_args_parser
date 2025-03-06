@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.Generators.Helpers;
+using CodeOfChaos.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -49,20 +49,16 @@ public class ClassDto(ISymbol symbol, ClassDeclarationSyntax syntax) {
 
     public void ToCommandData(GeneratorStringBuilder builder) {
         builder.AppendLine("public CommandData CommandData { get; } = new CommandData(")
-            .Indent()
-            .AppendLine($"\"{CommandName}\",")
-            .AppendLine($"\"{Description}\",")
-            .AppendLine($"typeof({symbol.ToDisplayString()})")
-            .UnIndent()
+            .AppendLineIndented($"\"{CommandName}\",")
+            .AppendLineIndented($"\"{Description}\",")
+            .AppendLineIndented($"typeof({symbol.ToDisplayString()})")
             .AppendLine(");");
     }
 
     public void ToCommandInitialization(GeneratorStringBuilder builder) {
         builder.AppendLine("public Task InitializeAsync(IUserInputRegistry registry) {")
-            .Indent()
-            .AppendLine($"var data = {GenericTypeDisplayName}.FromRegistry(registry);")
-            .AppendLine("return ExecuteAsync(data);")
-            .UnIndent()
+            .AppendLineIndented($"var data = {GenericTypeDisplayName}.FromRegistry(registry);")
+            .AppendLineIndented("return ExecuteAsync(data);")
             .AppendLine("}");
     }
 

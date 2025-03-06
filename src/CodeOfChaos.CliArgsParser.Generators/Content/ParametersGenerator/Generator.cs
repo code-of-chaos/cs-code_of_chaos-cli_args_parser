@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.Generators.Helpers;
+using CodeOfChaos.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
@@ -61,28 +61,21 @@ public class Generator : IIncrementalGenerator {
                 .AppendLine($"namespace {dto.Namespace};")
                 .AppendLine("#nullable enable")
                 .AppendLine($"public partial struct {dto.ToDeclarationName()} {{")
-                .IndentLine($"public static {dto.ClassName} FromRegistry(IUserInputRegistry registry) {{")
-                .IndentLine("return new() {")
-                .Indent();
-
-            foreach (PropertyDto propertyDto in dto.PropertyDtos) {
-                builder.AppendLine(propertyDto.ToPropertyInitialization());
-            }
-
-            builder
-                .UnIndentLine("};")
-                .UnIndentLine("}");
-
-            builder.AppendLine()
-                .AppendLine("public T NewFromRegistry<T>(IUserInputRegistry registry) where T : struct, IParameters {")
-                .Indent()
-                .AppendLine($"if(typeof(T) != typeof({dto.ClassName})) throw new ArgumentException(); ")
-                .AppendLine("object boxed = FromRegistry(registry)!;")
-                .AppendLine("return (T)boxed;")
-                .UnIndentLine("}");
-
-            builder
-                .UnIndentLine("}");
+                .Indent(b => {
+                    b.AppendLine($"public static {dto.ClassName} FromRegistry(IUserInputRegistry registry) => new() {{");
+                    b.ForEachAppendLineIndented(dto.PropertyDtos, propertyDto => propertyDto.ToPropertyInitialization());
+                    b.AppendLine("};");
+                })
+                .Indent(b => {
+                    b.AppendLine("public T NewFromRegistry<T>(IUserInputRegistry registry) where T : struct, IParameters {");
+                    b.AppendBodyIndented($"""
+                        if(typeof(T) != typeof({dto.ClassName})) throw new ArgumentException();
+                        object boxed = FromRegistry(registry)!;
+                        return (T)boxed;
+                        """);
+                    b.AppendLine("}");
+                })
+                .AppendLine("}");
 
             context.AddSource($"{dto.ClassName}.g.cs", builder.ToStringAndClear());
         }

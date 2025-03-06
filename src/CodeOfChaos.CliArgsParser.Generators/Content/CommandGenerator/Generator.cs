@@ -1,7 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.Generators.Helpers;
+using CodeOfChaos.GeneratorTools;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
@@ -55,16 +55,13 @@ public class Generator : IIncrementalGenerator {
                 .AppendLine($"namespace {dto.Namespace};")
                 .AppendLine("#nullable enable")
                 .AppendLine($"public partial class {dto.ToDeclarationName()} {{")
-                .Indent();
-
-            dto.ToCommandData(builder);
-            builder.AppendLine();
-
-            dto.ToCommandInitialization(builder);
-            builder.AppendLine();
-
-            builder
-                .UnIndentLine("}");
+                .Indent(b => {
+                    dto.ToCommandData(b);
+                    b.AppendLine();
+                    dto.ToCommandInitialization(b);
+                    b.AppendLine();
+                } )
+                .AppendLine("}");
 
             context.AddSource($"{dto.ClassName}.g.cs", builder.ToStringAndClear());
         }
