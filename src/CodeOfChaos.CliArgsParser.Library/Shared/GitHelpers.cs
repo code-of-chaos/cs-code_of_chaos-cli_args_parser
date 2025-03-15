@@ -1,7 +1,6 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using AterraEngine.Unions;
 using CodeOfChaos.Ansi;
 using System.Diagnostics;
 
@@ -10,7 +9,7 @@ namespace CodeOfChaos.CliArgsParser.Library.Shared;
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
 public static class GitHelpers {
-    public static async Task<SuccessOrFailure> TryPushToOrigin() {
+    public static async Task<bool> TryPushToOrigin() {
         var gitTagInfo = new ProcessStartInfo("git", "push origin") {
             RedirectStandardOutput = true,
             UseShellExecute = false,
@@ -25,13 +24,11 @@ public static class GitHelpers {
         
         await gitTagProcess.WaitForExitAsync();
 
-        if (gitTagProcess.ExitCode != 0) return "Push to origin failed";
-
-        return new Success();
+        return gitTagProcess.ExitCode == 0;
     }
     
     
-    public static async Task<SuccessOrFailure> TryPushTagsToOrigin() {
+    public static async Task<bool> TryPushTagsToOrigin() {
         var gitTagInfo = new ProcessStartInfo("git", "push origin --tags") {
             RedirectStandardOutput = true,
             UseShellExecute = false,
@@ -45,14 +42,12 @@ public static class GitHelpers {
         Console.WriteLine(builder.ToStringAndClear());
         
         await gitTagProcess.WaitForExitAsync();
-
-        if (gitTagProcess.ExitCode != 0) return "Pushing Tags to origin failed";
-
-        return new Success();
+        
+        return gitTagProcess.ExitCode == 0;
     }
     
 
-    public static async Task<SuccessOrFailure> TryCreateGitTag(SemanticVersionDto updatedVersion) {
+    public static async Task<bool> TryCreateGitTag(SemanticVersionDto updatedVersion) {
         var gitTagInfo = new ProcessStartInfo("git", "tag v" + updatedVersion) {
             RedirectStandardOutput = true,
             UseShellExecute = false,
@@ -67,12 +62,10 @@ public static class GitHelpers {
         
         await gitTagProcess.WaitForExitAsync();
 
-        if (gitTagProcess.ExitCode != 0) return "Git Tagging failed";
-
-        return new Success();
+        return gitTagProcess.ExitCode == 0;
     }
 
-    public static async Task<SuccessOrFailure> TryCreateGitCommit(SemanticVersionDto updatedVersion) {
+    public static async Task<bool> TryCreateGitCommit(SemanticVersionDto updatedVersion) {
         var gitCommitInfo = new ProcessStartInfo("git", $"commit -am \"VersionBump : v{updatedVersion}\"") {
             RedirectStandardOutput = true,
             UseShellExecute = false,
@@ -87,8 +80,7 @@ public static class GitHelpers {
         
         await gitCommitProcess.WaitForExitAsync();
 
-        if (gitCommitProcess.ExitCode != 0) return "Git Commit failed";
+        return gitCommitProcess.ExitCode == 0;
 
-        return new Success();
     }
 }

@@ -1,7 +1,6 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using AterraEngine.Unions;
 using CodeOfChaos.CliArgsParser.Library.Shared;
 using System.Xml.Linq;
 
@@ -12,19 +11,18 @@ namespace CodeOfChaos.CliArgsParser.Library.Commands.VersionBump;
 [CliArgsCommand("git-version-bump")]
 [CliArgsDescription("Bumps the version of the projects specified in the projects argument.")]
 public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
+    private static readonly List<string> ErrorMessages = [];
 
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
     public async Task ExecuteAsync(VersionBumpParameters parameters) {
         Console.WriteLine(ConsoleTextStore.BumpingVersion);
-        SuccessOrFailure<SemanticVersionDto> bumpResult = await BumpVersion(parameters);
-        if (bumpResult is { IsFailure: true, AsFailure.Value: var errorBumping }) {
-            Console.WriteLine(ConsoleTextStore.CommandEndFailure(errorBumping));
+        SemanticVersionDto? updatedVersion = await BumpVersion(parameters);
+        if (updatedVersion is null) {
+            foreach (string message in ErrorMessages) Console.WriteLine(ConsoleTextStore.CommandEndFailure(message));
             return;
         }
-
-        SemanticVersionDto updatedVersion = bumpResult.AsSuccess.Value;
         
         // Ask the user for extra input to make sure they want to commit and the current tag.
         if (!parameters.Force) {
@@ -37,16 +35,16 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
         }
 
         Console.WriteLine(ConsoleTextStore.GitCommitting);
-        SuccessOrFailure gitCommitResult = await GitHelpers.TryCreateGitCommit(updatedVersion);
-        if (gitCommitResult is { IsFailure: true, AsFailure.Value: var errorCommiting }) {
-            Console.WriteLine(ConsoleTextStore.CommandEndFailure(errorCommiting));
+        bool gitCommitResult = await GitHelpers.TryCreateGitCommit(updatedVersion);
+        if (!gitCommitResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Committing failed"));
             return;
         }
 
         Console.WriteLine(ConsoleTextStore.GitTagging);
-        SuccessOrFailure gitTagResult = await GitHelpers.TryCreateGitTag(updatedVersion);
-        if (gitTagResult is { IsFailure: true, AsFailure.Value: var errorTagging }) {
-            Console.WriteLine(ConsoleTextStore.CommandEndFailure(errorTagging));
+        bool gitTagResult = await GitHelpers.TryCreateGitTag(updatedVersion);
+        if (!gitTagResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Tagging failed"));
             return;
         }
 
@@ -58,15 +56,15 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
         }
 
         Console.WriteLine(ConsoleTextStore.GitPushingToRemote);
-        SuccessOrFailure pushResult = await GitHelpers.TryPushToOrigin();
-        if (pushResult is { IsFailure: true, AsFailure.Value: var errorPushing }) {
-            Console.WriteLine(ConsoleTextStore.CommandEndFailure(errorPushing));
+        bool pushResult = await GitHelpers.TryPushToOrigin();
+        if (!pushResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Pushing failed"));
             return;
         }
         
-        SuccessOrFailure pushTagsResult = await GitHelpers.TryPushTagsToOrigin();
-        if (pushTagsResult is { IsFailure: true, AsFailure.Value: var errorPushingTags }) {
-            Console.WriteLine(ConsoleTextStore.CommandEndFailure(errorPushingTags));
+        bool pushTagsResult = await GitHelpers.TryPushTagsToOrigin();
+        if (!pushTagsResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Pushing Tags failed"));
             return;
         }
 
@@ -74,10 +72,11 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
     }
 
 
-    private static async Task<SuccessOrFailure<SemanticVersionDto>> BumpVersion(VersionBumpParameters args) {
+    private static async Task<SemanticVersionDto?> BumpVersion(VersionBumpParameters args) {
         string[] projectFiles = CsProjHelpers.AsProjectPaths(args.Root, args.SourceFolder, args.GetProjects());
         if (projectFiles.Length == 0) {
-            return new Failure<string>("No projects specified");
+            ErrorMessages.Add("No projects specified");
+            return null;
         }
 
         VersionSection sectionToBump = args.Section;
@@ -97,12 +96,15 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
                 .Value ?? "UNKNOWN";
 
             if (versionElement == null) {
-                return new Failure<string>("File did not contain a version element");
+                ErrorMessages.Add($"File {projectName} did not contain a version element");
+                continue;
             }
 
             if (versionDto is null) {
-                if (!SemanticVersionDto.TryParse(versionElement.Value, out SemanticVersionDto? dto))
-                    return new Failure<string>($"File contained an invalid version element: {versionElement.Value}");
+                if (!SemanticVersionDto.TryParse(versionElement.Value, out SemanticVersionDto? dto)) {
+                    ErrorMessages.Add($"File {projectName} contained an invalid version element: {versionElement.Value}");
+                    continue;
+                }
 
                 dto.BumpVersion(sectionToBump);
 
@@ -113,8 +115,6 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
             Console.WriteLine(ConsoleTextStore.UpdatedVersion(projectName, versionElement.Value));
         }
 
-        return versionDto is not null
-            ? new Success<SemanticVersionDto>(versionDto)
-            : new Failure<string>("Could not find a version to bump");
+        return versionDto;
     }
 }

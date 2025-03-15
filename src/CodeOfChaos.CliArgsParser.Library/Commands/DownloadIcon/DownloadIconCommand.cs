@@ -1,7 +1,6 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using AterraEngine.Unions;
 using CodeOfChaos.CliArgsParser.Library.Shared;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
@@ -22,24 +21,27 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
     // -----------------------------------------------------------------------------------------------------------------
     public async Task ExecuteAsync(DownloadIconParameters parameters) {
         Console.WriteLine("Downloading Icon...");
-        SuccessOrFailure getResult = await TryGetIcon(parameters);
-        if (getResult is { IsFailure: true, AsFailure.Value: var getError }) {
-            Console.WriteLine(getError);
+        bool getResult = await TryGetIcon(parameters);
+        if (!getResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Could not download icon."));
+            return;
         }
 
         Console.WriteLine("Icon downloaded successfully.");
-        SuccessOrFailure applyResult = await ApplyIcon(parameters);
-        if (applyResult is { IsFailure: true, AsFailure.Value: var applyError }) {
-            Console.WriteLine(applyError);
+        bool applyResult = await ApplyIcon(parameters);
+        if (!applyResult) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Could not apply icon."));
+            return;
         }
 
         Console.WriteLine("Icon applied successfully.");
     }
 
-    private static async Task<SuccessOrFailure> ApplyIcon(DownloadIconParameters args) {
+    private static async Task<bool> ApplyIcon(DownloadIconParameters args) {
         string[] projectFiles = CsProjHelpers.AsProjectPaths(args.Root, args.SourceFolder, args.GetProjects());
         if (projectFiles.Length == 0) {
-            return new Failure<string>("No projects specified");
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("No projects specified"));
+            return false;
         }
 
         await foreach (XDocument document in CsProjHelpers.GetProjectFiles(projectFiles)) {
@@ -95,14 +97,15 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
             }
         }
 
-        return new Success();
+        return true;
     }
 
-    private static async Task<SuccessOrFailure> TryGetIcon(DownloadIconParameters parameters) {
-        try {
+    private static async Task<bool> TryGetIcon(DownloadIconParameters parameters) {
+        
             // Validate Origin
             if (string.IsNullOrWhiteSpace(parameters.Origin)) {
-                return "Error: The origin of the icon is not specified.";
+                Console.WriteLine(ConsoleTextStore.CommandEndFailure( "Error: The origin of the icon is not specified."));
+                return false;
             }
 
             // Assume Origin could be either a URL or a file path
@@ -121,7 +124,8 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
 
                 using HttpResponseMessage response = await client.GetAsync(parameters.Origin);
                 if (!response.IsSuccessStatusCode) {
-                    return $"Error: Failed to download the icon. HTTP Status: {response.StatusCode}";
+                    Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: Failed to download the icon. HTTP Status: {response.StatusCode}"));
+                    return false;
                 }
 
                 byte[] iconBytes = await response.Content.ReadAsByteArrayAsync();
@@ -134,7 +138,8 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
                 Console.WriteLine($"Copying icon from local path: {parameters.Origin}");
 
                 if (!File.Exists(parameters.Origin)) {
-                    return $"Error: The specified origin file does not exist: {parameters.Origin}";
+                    Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: The specified origin file does not exist: {parameters.Origin}"));
+                    return false;
                 }
 
                 File.Copy(parameters.Origin, destinationPath, true);
@@ -142,11 +147,6 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
             }
 
             // If all operations succeed
-            return new Success();
-        }
-        catch (Exception ex) {
-            // Return any unexpected errors
-            return $"Unexpected error: {ex.Message}";
-        }
+            return true;
     }
 }
