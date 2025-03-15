@@ -63,7 +63,7 @@ public class Generator : IIncrementalGenerator {
                 .AppendLine($"public partial struct {dto.ToDeclarationName()} {{")
                 .Indent(b => {
                     b.AppendLine($"public static {dto.ClassName} FromRegistry(IUserInputRegistry registry) => new() {{");
-                    b.ForEachAppendLineIndented(dto.PropertyDtos, propertyDto => propertyDto.ToPropertyInitialization());
+                    b.ForEachAppendLineIndented(dto.PropertyDtos, itemFormatter: propertyDto => propertyDto.ToPropertyInitialization());
                     b.AppendLine("};");
                 })
                 .Indent(b => {
@@ -73,6 +73,7 @@ public class Generator : IIncrementalGenerator {
                         object boxed = FromRegistry(registry)!;
                         return (T)boxed;
                         """);
+
                     b.AppendLine("}");
                 })
                 .AppendLine("}");

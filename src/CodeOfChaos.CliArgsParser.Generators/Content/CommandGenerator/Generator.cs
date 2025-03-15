@@ -60,7 +60,7 @@ public class Generator : IIncrementalGenerator {
                     b.AppendLine();
                     dto.ToCommandInitialization(b);
                     b.AppendLine();
-                } )
+                })
                 .AppendLine("}");
 
             context.AddSource($"{dto.ClassName}.g.cs", builder.ToStringAndClear());

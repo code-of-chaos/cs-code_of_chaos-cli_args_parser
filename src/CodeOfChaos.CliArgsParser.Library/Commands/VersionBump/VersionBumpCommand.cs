@@ -23,7 +23,7 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
             foreach (string message in ErrorMessages) Console.WriteLine(ConsoleTextStore.CommandEndFailure(message));
             return;
         }
-        
+
         // Ask the user for extra input to make sure they want to commit and the current tag.
         if (!parameters.Force) {
             Console.WriteLine(ConsoleTextStore.QuestionTagAndCommit);
@@ -61,7 +61,7 @@ public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
             Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Pushing failed"));
             return;
         }
-        
+
         bool pushTagsResult = await GitHelpers.TryPushTagsToOrigin();
         if (!pushTagsResult) {
             Console.WriteLine(ConsoleTextStore.CommandEndFailure("Git Pushing Tags failed"));

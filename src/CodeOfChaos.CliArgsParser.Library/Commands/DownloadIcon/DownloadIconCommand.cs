@@ -101,52 +101,52 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
     }
 
     private static async Task<bool> TryGetIcon(DownloadIconParameters parameters) {
-        
-            // Validate Origin
-            if (string.IsNullOrWhiteSpace(parameters.Origin)) {
-                Console.WriteLine(ConsoleTextStore.CommandEndFailure( "Error: The origin of the icon is not specified."));
+
+        // Validate Origin
+        if (string.IsNullOrWhiteSpace(parameters.Origin)) {
+            Console.WriteLine(ConsoleTextStore.CommandEndFailure("Error: The origin of the icon is not specified."));
+            return false;
+        }
+
+        // Assume Origin could be either a URL or a file path
+        bool isUrl = Uri.TryCreate(parameters.Origin, UriKind.Absolute, out Uri? uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+        // Placeholder for the final icon's path
+        string destinationPath = Path.Combine(parameters.Root, parameters.IconFolder, "icon.png");
+
+        // create all folders if needed for the destination path
+        Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
+
+        if (isUrl) {
+            // Download the file from URL using HttpClient
+            using var client = new HttpClient();
+            Console.WriteLine($"Downloading icon from URL: {parameters.Origin}");
+
+            using HttpResponseMessage response = await client.GetAsync(parameters.Origin);
+            if (!response.IsSuccessStatusCode) {
+                Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: Failed to download the icon. HTTP Status: {response.StatusCode}"));
                 return false;
             }
 
-            // Assume Origin could be either a URL or a file path
-            bool isUrl = Uri.TryCreate(parameters.Origin, UriKind.Absolute, out Uri? uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+            byte[] iconBytes = await response.Content.ReadAsByteArrayAsync();
+            await File.WriteAllBytesAsync(destinationPath, iconBytes);
 
-            // Placeholder for the final icon's path
-            string destinationPath = Path.Combine(parameters.Root, parameters.IconFolder, "icon.png");
+            Console.WriteLine($"Icon downloaded successfully to: {destinationPath}");
+        }
+        else {
+            // Treat as file system path and copy the icon
+            Console.WriteLine($"Copying icon from local path: {parameters.Origin}");
 
-            // create all folders if needed for the destination path
-            Directory.CreateDirectory(Path.GetDirectoryName(destinationPath)!);
-
-            if (isUrl) {
-                // Download the file from URL using HttpClient
-                using var client = new HttpClient();
-                Console.WriteLine($"Downloading icon from URL: {parameters.Origin}");
-
-                using HttpResponseMessage response = await client.GetAsync(parameters.Origin);
-                if (!response.IsSuccessStatusCode) {
-                    Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: Failed to download the icon. HTTP Status: {response.StatusCode}"));
-                    return false;
-                }
-
-                byte[] iconBytes = await response.Content.ReadAsByteArrayAsync();
-                await File.WriteAllBytesAsync(destinationPath, iconBytes);
-
-                Console.WriteLine($"Icon downloaded successfully to: {destinationPath}");
-            }
-            else {
-                // Treat as file system path and copy the icon
-                Console.WriteLine($"Copying icon from local path: {parameters.Origin}");
-
-                if (!File.Exists(parameters.Origin)) {
-                    Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: The specified origin file does not exist: {parameters.Origin}"));
-                    return false;
-                }
-
-                File.Copy(parameters.Origin, destinationPath, true);
-                Console.WriteLine($"Icon copied successfully to: {destinationPath}");
+            if (!File.Exists(parameters.Origin)) {
+                Console.WriteLine(ConsoleTextStore.CommandEndFailure($"Error: The specified origin file does not exist: {parameters.Origin}"));
+                return false;
             }
 
-            // If all operations succeed
-            return true;
+            File.Copy(parameters.Origin, destinationPath, true);
+            Console.WriteLine($"Icon copied successfully to: {destinationPath}");
+        }
+
+        // If all operations succeed
+        return true;
     }
 }

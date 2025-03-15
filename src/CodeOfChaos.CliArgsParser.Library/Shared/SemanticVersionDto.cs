@@ -64,11 +64,11 @@ public partial class SemanticVersionDto {
 
             case VersionSection.Preview when Preview is null: {
                 SemanticVersionDto newVersion = FromInput("Please enter a semantic version for the new preview version:");
-                
+
                 Major = newVersion.Major;
                 Minor = newVersion.Minor;
                 Patch = newVersion.Patch;
-                Preview = newVersion.Preview ?? 0 ;
+                Preview = newVersion.Preview ?? 0;
                 return;
             }
 
@@ -79,7 +79,7 @@ public partial class SemanticVersionDto {
 
             case VersionSection.Manual: {
                 SemanticVersionDto newVersion = FromInput();
-                
+
                 Major = newVersion.Major;
                 Minor = newVersion.Minor;
                 Patch = newVersion.Patch;

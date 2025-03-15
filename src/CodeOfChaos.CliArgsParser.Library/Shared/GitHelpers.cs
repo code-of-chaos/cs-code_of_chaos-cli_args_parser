@@ -15,37 +15,39 @@ public static class GitHelpers {
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
         var builder = new AnsiStringBuilder();
 
         using Process? gitTagProcess = Process.Start(gitTagInfo);
 
         builder.Fore.AppendWhitesmokeLine(await gitTagProcess?.StandardOutput.ReadToEndAsync()!);
         Console.WriteLine(builder.ToStringAndClear());
-        
+
         await gitTagProcess.WaitForExitAsync();
 
         return gitTagProcess.ExitCode == 0;
     }
-    
-    
+
+
     public static async Task<bool> TryPushTagsToOrigin() {
         var gitTagInfo = new ProcessStartInfo("git", "push origin --tags") {
             RedirectStandardOutput = true,
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
         var builder = new AnsiStringBuilder();
 
         using Process? gitTagProcess = Process.Start(gitTagInfo);
 
         builder.Fore.AppendWhitesmokeLine(await gitTagProcess?.StandardOutput.ReadToEndAsync()!);
         Console.WriteLine(builder.ToStringAndClear());
-        
+
         await gitTagProcess.WaitForExitAsync();
-        
+
         return gitTagProcess.ExitCode == 0;
     }
-    
+
 
     public static async Task<bool> TryCreateGitTag(SemanticVersionDto updatedVersion) {
         var gitTagInfo = new ProcessStartInfo("git", "tag v" + updatedVersion) {
@@ -53,13 +55,14 @@ public static class GitHelpers {
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
         var builder = new AnsiStringBuilder();
 
         using Process? gitTagProcess = Process.Start(gitTagInfo);
 
         builder.Fore.AppendWhitesmokeLine(await gitTagProcess?.StandardOutput.ReadToEndAsync()!);
         Console.WriteLine(builder.ToStringAndClear());
-        
+
         await gitTagProcess.WaitForExitAsync();
 
         return gitTagProcess.ExitCode == 0;
@@ -71,13 +74,14 @@ public static class GitHelpers {
             UseShellExecute = false,
             CreateNoWindow = true
         };
+
         var builder = new AnsiStringBuilder();
 
         using Process? gitCommitProcess = Process.Start(gitCommitInfo);
 
         builder.Fore.AppendWhitesmokeLine(await gitCommitProcess?.StandardOutput.ReadToEndAsync()!);
         Console.WriteLine(builder.ToStringAndClear());
-        
+
         await gitCommitProcess.WaitForExitAsync();
 
         return gitCommitProcess.ExitCode == 0;
