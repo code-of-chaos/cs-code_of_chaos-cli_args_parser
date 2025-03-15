@@ -8,7 +8,7 @@
 
         <!-- Main package name -->
         <PackageId>CodeOfChaos.CliArgsParser.Library</PackageId>
-        <Version>4.8.0</Version>
+        <Version>4.9.0</Version>
         <Authors>Anna Sas</Authors>
         <Description>CliArgsParser is a library built around Dependency Injection to allow you to create CLI tools with ease</Description>
         <PackageProjectUrl>https://github.com/code-of-chaos/cs-code_of_chaos-cli_args_parser/</PackageProjectUrl>
@@ -23,22 +23,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="../../LICENSE" Pack="true" PackagePath="" Visible="false"/>
-        <None Include="../../README.md" Pack="true" PackagePath="" Visible="false"/>
-        <None Include="../../assets/icon.png" Pack="true" PackagePath="" Visible="false"/>
+        <None Include="../../LICENSE" Pack="true" PackagePath="" Visible="false" />
+        <None Include="../../README.md" Pack="true" PackagePath="" Visible="false" />
+        <None Include="../../assets/icon.png" Pack="true" PackagePath="" Visible="false" />
     </ItemGroup>
 
     <ItemGroup>
         <!-- ProjectReference for the generator as an analyzer -->
-        <ProjectReference Include="..\CodeOfChaos.CliArgsParser.Generators\CodeOfChaos.CliArgsParser.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-        <ProjectReference Include="..\CodeOfChaos.CliArgsParser\CodeOfChaos.CliArgsParser.csproj"/>
+        <ProjectReference Include="..\CodeOfChaos.CliArgsParser.Generators\CodeOfChaos.CliArgsParser.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\CodeOfChaos.CliArgsParser\CodeOfChaos.CliArgsParser.csproj" />
 
         <!-- Ugly, but this is because of some weirdness with how analyzers are imported through a project reference -->
-        <PackageReference Include="CodeOfChaos.GeneratorTools" Version="1.4.1" GeneratePathProperty="true" PrivateAssets="all"/>
-        <Analyzer Include="$(PkgCodeOfChaos_GeneratorTools)\lib\netstandard2.0\*.dll"/>
+        <PackageReference Include="CodeOfChaos.GeneratorTools" Version="1.4.1" GeneratePathProperty="true" PrivateAssets="all" />
+        <Analyzer Include="$(PkgCodeOfChaos_GeneratorTools)\lib\netstandard2.0\*.dll" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CodeOfChaos.Ansi" Version="1.0.0"/>
+        <PackageReference Include="CodeOfChaos.Ansi" Version="1.0.0" />
     </ItemGroup>
 </Project>
