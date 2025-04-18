@@ -53,7 +53,7 @@ public class UserInputRegistryTests {
         bool flag = registry.GetParameter<bool>("--flag");
 
         // Assert
-        await Assert.That(flag).IsNotNull().Because("The parameter should exist");
+        await Assert.That(flag as object).IsNotNull().Because("The parameter should exist");
         await Assert.That(flag).IsEqualTo(true);
     }
 
@@ -160,7 +160,7 @@ public class UserInputRegistryTests {
         await Assert.That(key2).IsNotNull().Because("The parameter 'key2' should exist");
         await Assert.That(key2).IsEqualTo("value2");
 
-        await Assert.That(shortFlag).IsNotNull().Because("The flag '-f' should be a valid boolean value");
+        await Assert.That(shortFlag as object).IsNotNull().Because("The flag '-f' should be a valid boolean value");
         await Assert.That(shortFlag).IsEqualTo(true);
 
         await Assert.That(quotedString).IsNotNull().Because("The quoted string should be parsed correctly");
@@ -172,10 +172,10 @@ public class UserInputRegistryTests {
         await Assert.That(positional1).IsNotNull().Because("The second positional argument should exist");
         await Assert.That(positional1).IsEqualTo("arg2");
 
-        await Assert.That(boolFlag).IsNotNull().Because("The boolean flag 'boolFlag' should exist");
+        await Assert.That(boolFlag as object).IsNotNull().Because("The boolean flag 'boolFlag' should exist");
         await Assert.That(boolFlag).IsEqualTo(true);
 
-        await Assert.That(negativeFlag).IsNotNull().Because("The boolean flag 'negativeFlag' should exist");
+        await Assert.That(negativeFlag as object).IsNotNull().Because("The boolean flag 'negativeFlag' should exist");
         await Assert.That(negativeFlag).IsEqualTo(false);
     }
 
