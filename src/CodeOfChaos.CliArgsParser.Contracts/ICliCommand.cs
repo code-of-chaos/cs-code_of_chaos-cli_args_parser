@@ -1,21 +1,15 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+namespace CodeOfChaos.CliArgsParser;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+public interface ICliCommand<in TParameter> : ICliCommand 
+    where TParameter : ICliParameters 
+{
+    Task ExecuteAsync(TParameter parameters, CancellationToken ct = default);
 }
+
+public interface ICliCommand {}

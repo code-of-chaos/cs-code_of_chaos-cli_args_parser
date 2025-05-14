@@ -2,22 +2,22 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser;
+using CodeOfChaos.CliArgsParser.OLD;
 using JetBrains.Annotations;
 
 namespace Tests.CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-[TestSubject(typeof(UserInputRegistry))]
-public class UserInputRegistryTests {
+[TestSubject(typeof(ParameterDictionary))]
+public class ParameterDictionaryTests {
     [Test]
     public async Task Test_IngestString_ParsesSingleKeyValuePair() {
         // Arrange
-        var registry = new UserInputRegistry();
-        string input = "--key=value";
+        const string input = "--key=value";
 
         // Act
-        registry.IngestString(input);
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
 
         // Assert
         await Assert.That(registry.GetParameter<string>("--key")).IsNotNull().Because("The parameter should exist");
@@ -26,11 +26,10 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_IngestString_ParsesMultipleKeyValuePairs() {
         // Arrange
-        var registry = new UserInputRegistry();
-        string input = """--key1=value1 --key2="value 2" """;
+        const string input = """--key1=value1 --key2="value 2" """;
 
         // Act
-        registry.IngestString(input);
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
         string keyValue1 = registry.GetParameter<string>("--key1");
         string keyValue2 = registry.GetParameter<string>("--key2");
 
@@ -46,10 +45,9 @@ public class UserInputRegistryTests {
     // [Arguments( "-f" )]
     public async Task Test_IngestString_ParsesFlags(string input) {
         // Arrange
-        var registry = new UserInputRegistry();
 
         // Act
-        registry.IngestString(input);
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
         bool flag = registry.GetParameter<bool>("--flag");
 
         // Assert
@@ -60,11 +58,10 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_IngestString_ParsesQuotedString() {
         // Arrange
-        var registry = new UserInputRegistry();
         string input = "\"This is a test string\"";
 
         // Act
-        registry.IngestString(input);
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
 
         // Assert
         await Assert.That(registry.GetParameter<string>("quotedString_0")).IsNotNull().Because("The parameter should exist");
@@ -73,11 +70,10 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_IngestString_ParsesPositionalArguments() {
         // Arrange
-        var registry = new UserInputRegistry();
         const string input = "arg1 arg2";
 
         // Act
-        registry.IngestString(input);
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
         string positional0 = registry.GetParameter<string>("positional_0");
         string positional1 = registry.GetParameter<string>("positional_1");
 
@@ -91,7 +87,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetParameter_ThrowsKeyNotFoundException_WhenParameterNotFound() {
         // Arrange
-        var registry = new UserInputRegistry();
+        ParameterDictionary registry = ParameterDictionary.FromString(string.Empty);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() => Task.FromResult(registry.GetParameter<string>("nonexistent")));
@@ -100,7 +96,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameter_ReturnsNull_WhenParameterNotFound() {
         // Arrange
-        var registry = new UserInputRegistry();
+        ParameterDictionary registry = ParameterDictionary.FromString(string.Empty);
 
         // Act
         string? result = registry.GetOptionalParameter<string>("nonexistent");
@@ -112,8 +108,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameter_ReturnsValue_WhenParameterExists() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--key=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("--key=value");
 
         // Act
         string? result = registry.GetOptionalParameter<string>("--key");
@@ -125,8 +120,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_Dispose_ClearsParameters() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--key=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("--key=value");
 
         // Act
         registry.Dispose();
@@ -139,11 +133,10 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_IngestString_ParsesComplexInputWithMixedArguments() {
         // Arrange
-        var registry = new UserInputRegistry();
-        string input = "--key1=value1 --key2=value2 -f --quoted=\"This is a test\" arg1 arg2 --boolFlag=true --negativeFlag=false";
+        const string input = "--key1=value1 --key2=value2 -f --quoted=\"This is a test\" arg1 arg2 --boolFlag=true --negativeFlag=false";
+        ParameterDictionary registry = ParameterDictionary.FromString(input);
 
         // Act
-        registry.IngestString(input);
         string key1 = registry.GetParameter<string>("--key1");
         string key2 = registry.GetParameter<string>("--key2");
         bool shortFlag = registry.GetParameter<bool>("-f");
@@ -182,8 +175,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetParameterByPossibleNames_ReturnsValue_WhenFullNameExists() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--fullName=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("--fullName=value");
 
         // Act
         string result = registry.GetParameterByPossibleNames<string>("--fullName", "-f");
@@ -195,8 +187,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetParameterByPossibleNames_ReturnsValue_WhenShortNameExists() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("-f=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("-f=value");
 
         // Act
         string result = registry.GetParameterByPossibleNames<string>("--fullName", "-f");
@@ -208,7 +199,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetParameterByPossibleNames_ThrowsKeyNotFoundException_WhenParameterNotFound() {
         // Arrange
-        var registry = new UserInputRegistry();
+        var registry = ParameterDictionary.FromString(string.Empty);
 
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(() =>
@@ -218,8 +209,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameterByPossibleNames_ReturnsValue_WhenFullNameExists() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--fullName=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("--fullName=value");
 
         // Act
         string? result = registry.GetOptionalParameterByPossibleNames<string>("--fullName", "-f");
@@ -231,8 +221,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameterByPossibleNames_ReturnsValue_WhenShortNameExists() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("-f=value");
+        ParameterDictionary registry = ParameterDictionary.FromString("-f=value");
 
         // Act
         string? result = registry.GetOptionalParameterByPossibleNames<string>("--fullName", "-f");
@@ -244,7 +233,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameterByPossibleNames_ReturnsNull_WhenParameterNotFound() {
         // Arrange
-        var registry = new UserInputRegistry();
+        ParameterDictionary registry = ParameterDictionary.FromString(string.Empty);
 
         // Act
         string? result = registry.GetOptionalParameterByPossibleNames<string>("--nonexistent", "-n");
@@ -256,8 +245,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetParameterByPossibleNames_BooleanFlag_ReturnsValue() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--flag");
+        ParameterDictionary registry = ParameterDictionary.FromString("--flag");
 
         // Act
         bool flag = registry.GetParameterByPossibleNames<bool>("--flag", "-f");
@@ -269,8 +257,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetOptionalParameterByPossibleNames_BooleanFlag_ReturnsValue() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--flag");
+        ParameterDictionary registry = ParameterDictionary.FromString("--flag");
 
         // Act
         bool? flag = registry.GetOptionalParameterByPossibleNames<bool>("--flag", "-f");
@@ -282,8 +269,7 @@ public class UserInputRegistryTests {
     [Test]
     public async Task Test_GetKeyValue_WithHyphen_ReturnsValue() {
         // Arrange
-        var registry = new UserInputRegistry();
-        registry.IngestString("--key-value=\"value\"");
+        ParameterDictionary registry = ParameterDictionary.FromString("--key-value=\"value\"");
 
         // Act
         string? result = registry.GetOptionalParameter<string>("--key-value");

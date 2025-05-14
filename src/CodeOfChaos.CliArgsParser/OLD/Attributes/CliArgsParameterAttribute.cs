@@ -1,21 +1,17 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
-
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace CodeOfChaos.CliArgsParser.OLD;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
+[AttributeUsage(AttributeTargets.Property)]
+#pragma warning disable CS9113// Parameter is unread.
+public class CliArgsParameterAttribute(string name, string shortName, ParameterType type = ParameterType.Value) : Attribute {
+#pragma warning restore CS9113// Parameter is unread.
+}
 
-        await parser.ParseAsync(args);
-    }
+public enum ParameterType : uint {
+    Value = 0,
+    Flag = 1
 }

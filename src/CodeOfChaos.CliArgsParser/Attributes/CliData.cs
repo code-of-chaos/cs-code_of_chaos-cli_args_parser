@@ -1,21 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+namespace CodeOfChaos.CliArgsParser;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Class)]
+public class CliDataAttribute(string? name = null, string? shortName = null) : Attribute {
+    public string? Name { get; } = name;
+    public string? ShortName { get; } = shortName;
 }

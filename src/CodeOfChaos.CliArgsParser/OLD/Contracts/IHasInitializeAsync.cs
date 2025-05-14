@@ -1,10 +1,10 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-namespace CodeOfChaos.CliArgsParser;
+namespace CodeOfChaos.CliArgsParser.OLD;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public interface INonGenericCommandInterfaces :
-    IHasCommandData,
-    IHasInitializeAsync;
+public interface IHasInitializeAsync {
+    Task InitializeAsync(IParameterDictionary registry);
+}

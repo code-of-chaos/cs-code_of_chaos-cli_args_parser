@@ -1,21 +1,10 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
-
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace CodeOfChaos.CliArgsParser.OLD;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+public interface IParameters {
+    T NewFromRegistry<T>(IParameterDictionary dictionary) where T : struct, IParameters;
 }

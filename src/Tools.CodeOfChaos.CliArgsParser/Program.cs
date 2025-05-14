@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser;
 using CodeOfChaos.CliArgsParser.Library;
+using CodeOfChaos.CliArgsParser.OLD;
 
 namespace Tools.CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
@@ -12,7 +13,7 @@ public static class Program {
     public static async Task Main(string[] args) {
         // Register & Build the parser
         //      Don't forget to add the current assembly if you built more tools for the current project
-        global::CodeOfChaos.CliArgsParser.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
+        global::CodeOfChaos.CliArgsParser.OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
             config => {
                 config.AddCommandsFromAssemblyEntrypoint<IAssemblyEntry>();
             }
@@ -25,10 +26,11 @@ public static class Program {
         string projects = string.Join(";",
             "CodeOfChaos.CliArgsParser",
             "CodeOfChaos.CliArgsParser.Generators",
-            "CodeOfChaos.CliArgsParser.Library"
+            "CodeOfChaos.CliArgsParser.Library",
+            "CodeOfChaos.CliArgsParser.Contracts"
         );
 
-        string oneLineArgs = InputHelper.ToOneLine(args).Replace("%PROJECTS%", projects);
+        string oneLineArgs = ArgsInputHelper.ToOneLine(args).Replace("%PROJECTS%", projects);
 
         // Finally start executing
         await parser.ParseAsync(oneLineArgs);

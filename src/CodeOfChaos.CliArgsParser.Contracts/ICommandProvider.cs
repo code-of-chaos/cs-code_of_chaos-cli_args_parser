@@ -1,21 +1,13 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace CodeOfChaos.CliArgsParser;
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+public interface ICommandProvider {
+    bool TryGetCommand(string name, [NotNullWhen(true)] out Type? commandType);
 }

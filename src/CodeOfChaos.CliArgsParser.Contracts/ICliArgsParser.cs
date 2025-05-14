@@ -2,9 +2,11 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 namespace CodeOfChaos.CliArgsParser;
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public interface IHasCommandData {
-    CommandData CommandData { get; }
+public interface ICliArgsParser {
+    ValueTask ExecuteAsync(string[] args);
+    ValueTask ExecuteAsync(string args);
 }

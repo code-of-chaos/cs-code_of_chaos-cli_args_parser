@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\CodeOfChaos.CliArgsParser.Contracts\CodeOfChaos.CliArgsParser.Contracts.csproj" />
         <ProjectReference Include="..\..\src\CodeOfChaos.CliArgsParser\CodeOfChaos.CliArgsParser.csproj"/>
     </ItemGroup>
 

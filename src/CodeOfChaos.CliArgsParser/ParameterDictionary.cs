@@ -7,7 +7,7 @@ namespace CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public partial class UserInputRegistry : IUserInputRegistry {
+public partial class ParameterDictionary : IParameterDictionary {
     private readonly Dictionary<string, object> _parameters = new();
     private uint _positionalCounter;
     private uint _quotedStringCounter;
@@ -25,11 +25,11 @@ public partial class UserInputRegistry : IUserInputRegistry {
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public void IngestString(IEnumerable<string> input) => IngestString(InputHelper.ToOneLine(input as string[] ?? input.ToArray()));
-    public void IngestString(string[] input) => IngestString(InputHelper.ToOneLine(input));
-
-    public void IngestString(string input) {
+    private ParameterDictionary() { }
+    
+    public static ParameterDictionary FromString(string input) {
         MatchCollection matches = GatherValuesRegex.Matches(input);
+        var parameters = new ParameterDictionary();
 
         foreach (Match match in matches) {
             if (match.Groups["keyValue"].Success) {
@@ -40,13 +40,13 @@ public partial class UserInputRegistry : IUserInputRegistry {
                 // Check if the value is a boolean true/false
                 if (bool.TryParse(value, out bool boolResult)) {
                     // Store as boolean
-                    _parameters[key] = boolResult;
+                    parameters._parameters[key] = boolResult;
                     continue;
                 }
 
                 // Remove quotations if present
                 // Store as string or other data type
-                _parameters[key] = value.Trim('"');
+                parameters._parameters[key] = value.Trim('"');
                 continue;
             }
 
@@ -54,14 +54,14 @@ public partial class UserInputRegistry : IUserInputRegistry {
             if (match.Groups["flag"].Success) {
                 // Flags are interpreted as true by default
                 string flag = match.Groups["flag"].Value;
-                _parameters[flag] = true;
+                parameters._parameters[flag] = true;
                 continue;
             }
 
             // Quoted String
             if (match.Groups["quotedString"].Success) {
                 string quotedContent = match.Groups["quoted"].Value;
-                _parameters[$"quotedString_{_quotedStringCounter++}"] = quotedContent;
+                parameters._parameters[$"quotedString_{parameters._quotedStringCounter++}"] = quotedContent;
                 continue;
             }
 
@@ -69,14 +69,15 @@ public partial class UserInputRegistry : IUserInputRegistry {
             // Positional Argument
             if (match.Groups["positional"].Success) {
                 string positional = match.Groups["positional"].Value;
-                _parameters[$"positional_{_positionalCounter++}"] = positional;
+                parameters._parameters[$"positional_{parameters._positionalCounter++}"] = positional;
             }
         }
+        return parameters;
     }
 
     public T GetParameterByPossibleNames<T>(string name, string shortName) {
-        if (_parameters.TryGetValue(name, out object? parameter)) return (T)Convert.ChangeType(parameter, typeof(T));
-        if (_parameters.TryGetValue(shortName, out parameter)) return (T)Convert.ChangeType(parameter, typeof(T));
+        if (_parameters.TryGetValue(name, out object? parameter) || _parameters.TryGetValue(shortName, out parameter)
+        ) return (T)Convert.ChangeType(parameter, typeof(T));
 
         throw new KeyNotFoundException($"Parameter '{name}' or '{shortName}' not found.");
     }

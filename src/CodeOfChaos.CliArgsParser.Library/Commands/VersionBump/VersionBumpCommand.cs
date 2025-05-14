@@ -2,6 +2,7 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser.Library.Shared;
+using CodeOfChaos.CliArgsParser.OLD;
 using System.Xml.Linq;
 
 namespace CodeOfChaos.CliArgsParser.Library.Commands.VersionBump;

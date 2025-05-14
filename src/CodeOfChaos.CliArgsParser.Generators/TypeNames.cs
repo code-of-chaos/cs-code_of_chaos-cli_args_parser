@@ -1,21 +1,16 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace CodeOfChaos.CliArgsParser.Generators;
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<ExampleCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public static class TypeNames {
+    public const string ICliCommandInterface = "CodeOfChaos.CliArgsParser.ICliCommand";
+    public const string ICliCommandGenericInterface = "CodeOfChaos.CliArgsParser.ICliCommand`1";
+    public const string ICliParametersInterface = "CodeOfChaos.CliArgsParser.ICliParameters";
 }
