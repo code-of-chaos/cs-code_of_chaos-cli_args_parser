@@ -34,7 +34,7 @@
         <ProjectReference Include="..\CodeOfChaos.CliArgsParser\CodeOfChaos.CliArgsParser.csproj" />
 
         <!-- Ugly, but this is because of some weirdness with how analyzers are imported through a project reference -->
-        <PackageReference Include="CodeOfChaos.GeneratorTools" Version="1.7.1" GeneratePathProperty="true" PrivateAssets="all" />
+        <PackageReference Include="CodeOfChaos.GeneratorTools" Version="1.8.0" GeneratePathProperty="true" PrivateAssets="all" />
         <Analyzer Include="$(PkgCodeOfChaos_GeneratorTools)\lib\netstandard2.0\*.dll" />
     </ItemGroup>
 

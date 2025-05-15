@@ -3,7 +3,7 @@
   "profiles": {
     "DebugRoslynSourceGenerator": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "../CodeOfChaos.CliArgsParser.Generators.Sample/CodeOfChaos.CliArgsParser.Generators.Sample.csproj"
+      "targetProject": "../Sample.CodeOfChaos.CliArgsParser/Sample.CodeOfChaos.CliArgsParser.csproj"
     }
   }
 }

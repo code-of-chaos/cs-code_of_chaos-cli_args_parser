@@ -27,4 +27,12 @@
         <None Include="../../assets/icon.png" Pack="true" PackagePath="" Visible="false" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\CodeOfChaos.CliArgsParser.Contracts\CodeOfChaos.CliArgsParser.Contracts.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CodeOfChaos.Extensions" Version="0.66.1" />
+    </ItemGroup>
+
 </Project>
