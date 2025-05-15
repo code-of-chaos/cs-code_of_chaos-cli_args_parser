@@ -17,12 +17,13 @@ public partial class CliParser : ICliParser {
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
     internal CliParser() { }
-    public static CliArgsParserBuilder FromBuilder() {
-        return new CliArgsParserBuilder();
+    public static CliParserBuilder FromBuilder() {
+        return new CliParserBuilder();
     }
     
     public ValueTask ExecuteAsync(string[] args, CancellationToken ct = default) => ExecuteAsync(ArgsInputHelper.ToOneLine(args), ct);
     public async ValueTask ExecuteAsync(string input, CancellationToken ct = default) {
+        input = input.Replace("\\\"", "\"");
         if (input.Contains("&&")) {
             IEnumerable<Task> tasks = input
                 .Split("&&")
@@ -33,7 +34,7 @@ public partial class CliParser : ICliParser {
         
         string[] tokens = FindEmptySpacesRegex.Split(input);
         string commandName = tokens[0];
-        string parameterInput = ArgsInputHelper.ToOneLine(tokens.Skip(1));
+        string parameterInput = string.Join(" ", tokens.Skip(1));
 
         if (!CommandProvider.TryGetCommand(commandName, out Type? commandType)) throw new Exception("no Command found");
 

@@ -6,9 +6,9 @@ namespace CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public interface ICliArgsParserBuilder {
-    ICliArgsParserBuilder AddServices(IServiceProvider provider);
-    ICliArgsParserBuilder AddServices(Func<IServiceProvider> provider);
+public interface ICliParserBuilder {
+    ICliParserBuilder AddServices(IServiceProvider provider);
+    ICliParserBuilder AddServices(Func<IServiceProvider> provider);
     
     ICliParser Build();
 }

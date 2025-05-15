@@ -14,6 +14,9 @@ namespace Sample.CodeOfChaos.CliArgsParser;
 [CliData, AutoName]
 public partial class TestCommand : ICliCommand<TestCommandParameters> {
     public async ValueTask ExecuteAsync(TestCommandParameters parameters, CancellationToken ct = default) {
-        throw new NotImplementedException();
+        Console.WriteLine(parameters.TestString);
+        Console.WriteLine(parameters.TestInt);
+        Console.WriteLine(parameters.TestBool);
+        Console.WriteLine(parameters.TestRequiredString);
     }
 }

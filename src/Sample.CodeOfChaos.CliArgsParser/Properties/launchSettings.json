@@ -2,7 +2,7 @@
   "profiles": {
     "Run Example": {
       "commandName": "Project",
-      "commandLineArgs": "example --test=\"Some Value\" -v"
+      "commandLineArgs": "test-command --test-string=\"Some Value\" --test-int=2 --test-bool --test-required-string=alpha"
     }
   }
 }

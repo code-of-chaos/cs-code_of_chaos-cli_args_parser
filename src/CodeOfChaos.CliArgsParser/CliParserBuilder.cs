@@ -9,7 +9,7 @@ namespace CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public partial class CliArgsParserBuilder : ICliArgsParserBuilder {
+public partial class CliParserBuilder : ICliParserBuilder {
     private Func<IServiceProvider>? ServiceProvider { get; set; }
     private CommandProvider CommandProvider { get; set; } = new();
 
@@ -19,19 +19,19 @@ public partial class CliArgsParserBuilder : ICliArgsParserBuilder {
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public ICliArgsParserBuilder AddServices(IServiceProvider provider) {
+    public ICliParserBuilder AddServices(IServiceProvider provider) {
         ServiceProvider = () => provider;
         return this;
     }
     
-    public ICliArgsParserBuilder AddServices(Func<IServiceProvider> provider) {
+    public ICliParserBuilder AddServices(Func<IServiceProvider> provider) {
         ServiceProvider = provider;
         return this;   
     }
 
-    public ICliArgsParserBuilder AddCommandsFromAssembly<TEntrypoint>() => AddCommandsFromAssembly(typeof(TEntrypoint).Assembly);
+    public ICliParserBuilder AddCommandsFromAssembly<TEntrypoint>() => AddCommandsFromAssembly(typeof(TEntrypoint).Assembly);
     
-    public ICliArgsParserBuilder AddCommandsFromAssembly(Assembly assembly) {
+    public ICliParserBuilder AddCommandsFromAssembly(Assembly assembly) {
         Type[] types = assembly.GetTypes();
         Type? staticDictionaryType = types.FirstOrDefault(t => FindCommandDictionary.IsMatch(t.Name) && t.IsClass);
         var commandsDictionary = staticDictionaryType?.GetField("Commands")?.GetValue(null) as Dictionary<string, Type>;

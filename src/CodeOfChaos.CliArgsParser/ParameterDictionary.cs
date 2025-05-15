@@ -12,7 +12,12 @@ public partial class ParameterDictionary : IParameterDictionary {
     private uint _positionalCounter;
     private uint _quotedStringCounter;
 
-    [GeneratedRegex("""(?:(?<keyValue>(?<key>--[\w\-_]+|-[\w\-_])\s*=\s*(?<value>"[^"]*"|[^ ]+)))|(?<flag>(?:--[\w\-_]+|-[\w\-_])(?=\s|$))|(?<quotedString>"(?<quoted>[^"]*)")|(?<positional>\S+)""")]
+    [GeneratedRegex("""
+    (?<keyValue>(?<key>--[\w\-_]+|-[\w\-_])\s*=\s*(?<value>\\?"[^"]*\\?"))
+    |(?<flag>(?:--[\w\-_]+|-[\w\-_])(?=\s|$))
+    |(?<quotedString>\\?"(?<quoted>[^"]*)\\?")
+    |(?<positional>\S+)
+    """, RegexOptions.IgnorePatternWhitespace)]
     private static partial Regex GatherValuesRegex { get; }
     
     // -----------------------------------------------------------------------------------------------------------------
