@@ -4,6 +4,7 @@
 using CodeOfChaos.CliArgsParser.Generators.Helpers;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 
@@ -14,17 +15,19 @@ namespace CodeOfChaos.CliArgsParser.Generators;
 // ---------------------------------------------------------------------------------------------------------------------
 public record ParameterDto([UsedImplicitly] IPropertySymbol Symbol) {
     public string PropertyName { get; } = Symbol.Name;
+    public string PropertyType { get; } = Symbol.Type.ToDisplayString();
     public string NameSpace { get; } = Symbol.ContainingNamespace.ToDisplayString();
     public string Accessibility { get; } = Symbol.GetAccessibility();
+    public bool IsRequired { get; } = Symbol.IsRequired;
     public bool HasInitSetter { get; } = Symbol.SetMethod?.IsInitOnly ?? false;
 
-    public string Name { get; } = GetName(Symbol);
-    public string ShortName { get; } = GetShortName(Symbol);
+    public string Name { get; } = $"--{GetName(Symbol)}".ToQuotedString();
+    public string ShortName { get; } = $"-{GetShortName(Symbol)}".ToQuotedString();
 
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public static string GetName(IPropertySymbol symbol) {
+    private static string GetName(IPropertySymbol symbol) {
         ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
         AttributeData? cliDataAttribute = attributes.FirstOrDefault(attr => attr.IsDisplayName(TypeNames.CliDataAttribute));
 
@@ -33,8 +36,8 @@ public record ParameterDto([UsedImplicitly] IPropertySymbol Symbol) {
             ? symbol.Name.ToKebabCase()
             : "UNDEFINED";
     }
-    
-    public static string GetShortName(IPropertySymbol symbol) {
+
+    private static string GetShortName(IPropertySymbol symbol) {
         ImmutableArray<AttributeData> attributes = symbol.GetAttributes();
         AttributeData? cliDataAttribute = attributes.FirstOrDefault(attr => attr.IsDisplayName(TypeNames.CliDataAttribute));
 
@@ -43,6 +46,11 @@ public record ParameterDto([UsedImplicitly] IPropertySymbol Symbol) {
             ? string.Join("", symbol.Name.ToKebabCase().Split('-').Select(s => s[0]))
             : "UNDEFINED";
     }
-    
-    
+
+
+    public string GetWithPropertyDictionary() {
+        return IsRequired
+            ? $"parameterDictionary.GetParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})" 
+            : $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
+    }
 }

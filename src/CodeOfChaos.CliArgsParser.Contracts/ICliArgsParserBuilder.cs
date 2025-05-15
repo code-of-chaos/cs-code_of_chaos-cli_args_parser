@@ -10,5 +10,5 @@ public interface ICliArgsParserBuilder {
     ICliArgsParserBuilder AddServices(IServiceProvider provider);
     ICliArgsParserBuilder AddServices(Func<IServiceProvider> provider);
     
-    ICliArgsParser Build();
+    ICliParser Build();
 }

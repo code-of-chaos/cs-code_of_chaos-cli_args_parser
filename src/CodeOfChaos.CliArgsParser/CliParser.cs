@@ -2,13 +2,12 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using System.Text.RegularExpressions;
-using System.Windows.Input;
 
 namespace CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public partial class CliArgsParser : ICliArgsParser {
+public partial class CliParser : ICliParser {
     public required Lazy<IServiceProvider>? ServiceProvider { get; init; }
     public required ICommandProvider CommandProvider { get; init; }
     
@@ -17,12 +16,13 @@ public partial class CliArgsParser : ICliArgsParser {
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public CliArgsParserBuilder FromBuilder() {
+    internal CliParser() { }
+    public static CliArgsParserBuilder FromBuilder() {
         return new CliArgsParserBuilder();
     }
     
-    public ValueTask ExecuteAsync(string[] args) => ExecuteAsync(ArgsInputHelper.ToOneLine(args));
-    public async ValueTask ExecuteAsync(string input) {
+    public ValueTask ExecuteAsync(string[] args, CancellationToken ct = default) => ExecuteAsync(ArgsInputHelper.ToOneLine(args), ct);
+    public async ValueTask ExecuteAsync(string input, CancellationToken ct = default) {
         if (input.Contains("&&")) {
             IEnumerable<Task> tasks = input
                 .Split("&&")
@@ -35,20 +35,15 @@ public partial class CliArgsParser : ICliArgsParser {
         string commandName = tokens[0];
         string parameterInput = ArgsInputHelper.ToOneLine(tokens.Skip(1));
 
-        if (!CommandProvider.TryGetCommand(commandName, out Type? commandType)) {
-            throw new Exception("no Command found");
-            return;
-        }
+        if (!CommandProvider.TryGetCommand(commandName, out Type? commandType)) throw new Exception("no Command found");
 
         ICliCommand? command = ServiceProvider is not null
             ? Activator.CreateInstance(commandType, ServiceProvider.Value) as ICliCommand
             : Activator.CreateInstance(commandType) as ICliCommand;
         
-        if (command is null) {
-            throw new Exception("no Command found");
-            return;
-        }
+        if (command is null) throw new Exception("no Command found");
         
-        
+        ParameterDictionary parameterDictionary = ParameterDictionary.FromString(parameterInput);
+        await command.StartExecution(parameterDictionary, ct);
     }
 }

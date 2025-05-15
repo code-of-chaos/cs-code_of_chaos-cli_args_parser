@@ -118,19 +118,6 @@ public class ParameterDictionaryTests {
     }
 
     [Test]
-    public async Task Test_Dispose_ClearsParameters() {
-        // Arrange
-        ParameterDictionary registry = ParameterDictionary.FromString("--key=value");
-
-        // Act
-        registry.Dispose();
-
-        // Assert
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => Task.FromResult(registry.GetParameter<string>("key")));
-    }
-
-
-    [Test]
     public async Task Test_IngestString_ParsesComplexInputWithMixedArguments() {
         // Arrange
         const string input = "--key1=value1 --key2=value2 -f --quoted=\"This is a test\" arg1 arg2 --boolFlag=true --negativeFlag=false";

@@ -9,7 +9,9 @@ namespace CodeOfChaos.CliArgsParser;
 public interface ICliCommand<in TParameter> : ICliCommand 
     where TParameter : ICliParameters 
 {
-    Task ExecuteAsync(TParameter parameters, CancellationToken ct = default);
+    ValueTask ExecuteAsync(TParameter parameters, CancellationToken ct = default);
 }
 
-public interface ICliCommand {}
+public interface ICliCommand {
+    ValueTask StartExecution(IParameterDictionary parameters, CancellationToken ct = default);
+}

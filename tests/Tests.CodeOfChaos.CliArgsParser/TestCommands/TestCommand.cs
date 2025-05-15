@@ -10,7 +10,7 @@ namespace Tests.CodeOfChaos.CliArgsParser.TestCommands;
 // ---------------------------------------------------------------------------------------------------------------------
 [CliData, AutoName]
 public partial class TestCommand : ICliCommand<TestCommandParameters> {
-    public async Task ExecuteAsync(TestCommandParameters parameters, CancellationToken ct = default) {
-        throw new NotImplementedException();
+    public ValueTask ExecuteAsync(TestCommandParameters parameters, CancellationToken ct = default) {
+        return ValueTask.CompletedTask;
     }
 }

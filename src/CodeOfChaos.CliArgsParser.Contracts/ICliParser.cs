@@ -6,7 +6,7 @@ namespace CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public interface ICliArgsParser {
-    ValueTask ExecuteAsync(string[] args);
-    ValueTask ExecuteAsync(string args);
+public interface ICliParser {
+    ValueTask ExecuteAsync(string[] args, CancellationToken ct = default);
+    ValueTask ExecuteAsync(string args, CancellationToken ct = default);
 }

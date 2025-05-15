@@ -4,16 +4,20 @@
 using CodeOfChaos.CliArgsParser.OLD;
 using CodeOfChaos.Extensions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace CodeOfChaos.CliArgsParser;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public class CliArgsParserBuilder : ICliArgsParserBuilder {
+public partial class CliArgsParserBuilder : ICliArgsParserBuilder {
     private Func<IServiceProvider>? ServiceProvider { get; set; }
     private CommandProvider CommandProvider { get; set; } = new();
 
+    [GeneratedRegex("__[A-Za-z0-9]+__CliArgsParserDictionary")]
+    private static partial Regex FindCommandDictionary { get; }
+    
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
@@ -27,32 +31,24 @@ public class CliArgsParserBuilder : ICliArgsParserBuilder {
         return this;   
     }
 
+    public ICliArgsParserBuilder AddCommandsFromAssembly<TEntrypoint>() => AddCommandsFromAssembly(typeof(TEntrypoint).Assembly);
+    
     public ICliArgsParserBuilder AddCommandsFromAssembly(Assembly assembly) {
-        IEnumerable<Type> commands = assembly.GetTypes().Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommand<>)));
+        Type[] types = assembly.GetTypes();
+        Type? staticDictionaryType = types.FirstOrDefault(t => FindCommandDictionary.IsMatch(t.Name) && t.IsClass);
+        var commandsDictionary = staticDictionaryType?.GetField("Commands")?.GetValue(null) as Dictionary<string, Type>;
+        if (commandsDictionary is null) return this;
 
-        foreach (Type command in commands) {
-            Attribute[] attributes = command.GetCustomAttributes().ToArray();
-            var cliData = (CliDataAttribute?)attributes.FirstOrDefault(a => a is CliDataAttribute);
-            string? name = cliData?.Name;
-            string? shortName = cliData?.ShortName;
-            
-            bool hasAutoName = attributes.Any(a => a is AutoNameAttribute);
-            if (hasAutoName) {
-                string commandName = command.Name;
-                name ??= $"--{commandName.ToKebabCase()}";
-                shortName ??= $"-{string.Join("", commandName.ToKebabCase().Split('-').Select(s => s[0]))}";
-            }
-            
-            CommandProvider.TryRegisterCommand(name!, command);
-            CommandProvider.TryRegisterCommand(shortName!, command);
+        foreach ((string key, Type value) in commandsDictionary) {
+            CommandProvider.TryRegisterCommand(key, value);
         }
         
         return this;   
     }
     
 
-    public ICliArgsParser Build() {
-        return new CliArgsParser {
+    public ICliParser Build() {
+        return new CliParser {
             ServiceProvider = ServiceProvider is not null ? new Lazy<IServiceProvider>(ServiceProvider) : null,
             CommandProvider = CommandProvider
         };

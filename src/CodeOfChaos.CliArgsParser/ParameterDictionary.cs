@@ -14,14 +14,7 @@ public partial class ParameterDictionary : IParameterDictionary {
 
     [GeneratedRegex("""(?:(?<keyValue>(?<key>--[\w\-_]+|-[\w\-_])\s*=\s*(?<value>"[^"]*"|[^ ]+)))|(?<flag>(?:--[\w\-_]+|-[\w\-_])(?=\s|$))|(?<quotedString>"(?<quoted>[^"]*)")|(?<positional>\S+)""")]
     private static partial Regex GatherValuesRegex { get; }
-
-    public void Dispose() {
-        _parameters.Clear();
-        _positionalCounter = 0;
-        _quotedStringCounter = 0;
-        GC.SuppressFinalize(this);
-    }
-
+    
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------

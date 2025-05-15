@@ -1,18 +1,26 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using CodeOfChaos.CliArgsParser;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace Tests.CodeOfChaos.CliArgsParser;
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-[CliData, AutoName]
-public partial class TestCommand : ICliCommand<TestCommandParameters> {
-    public async ValueTask ExecuteAsync(TestCommandParameters parameters, CancellationToken ct = default) {
-        throw new NotImplementedException();
+public class CliParserTests {
+    [Test]
+    public async Task ExecuteAsync_Test() {
+        // Arrange
+        const string input = "test-command --test-required-string=\"something\"";
+        ICliParser parser = CliParser.FromBuilder()
+            .AddCommandsFromAssembly(typeof(CliParserTests).Assembly)
+            .Build();
+        
+        // Act
+        await parser.ExecuteAsync(input);
+        
+        // Assert
+
     }
 }
