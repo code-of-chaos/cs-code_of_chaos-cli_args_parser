@@ -1,21 +1,15 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using System.Linq;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace CodeOfChaos.CliArgsParser.Generators.Helpers;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<TestCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
+public static class ITypeSymvolExtensions {
+    public static bool HasInterfaceWithDisplayName<TSymbol>(this TSymbol symbol, string displayName) where TSymbol : ITypeSymbol {
+        return symbol.AllInterfaces.Any(i => i.IsDisplayName(displayName));
     }
 }

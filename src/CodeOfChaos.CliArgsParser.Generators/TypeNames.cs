@@ -11,6 +11,9 @@ namespace CodeOfChaos.CliArgsParser.Generators;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public static class TypeNames {
     public const string ICliCommandInterface = "CodeOfChaos.CliArgsParser.ICliCommand";
-    public const string ICliCommandGenericInterface = "CodeOfChaos.CliArgsParser.ICliCommand`1";
+    public const string ICliCommandGenericInterface = "CodeOfChaos.CliArgsParser.ICliCommand<TParameter>";
     public const string ICliParametersInterface = "CodeOfChaos.CliArgsParser.ICliParameters";
+    
+    public const string CliDataAttribute = "CodeOfChaos.CliArgsParser.CliDataAttribute";
+    public const string AutoNameAttribute = "CodeOfChaos.CliArgsParser.AutoNameAttribute";
 }
