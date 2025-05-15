@@ -29,7 +29,7 @@ public class CliParserTests {
     [Test]
     public async Task ExecuteAsync_TestWithServices() {
         // Arrange
-        const string input = "test-service-command --test-required-string=\"something\"";
+        const string input = "test-service-command --test-required-string=\"something\" --test-bool";
         var services = new ServiceCollection();
         services.AddSingleton<IService, Service>();
         ServiceProvider provider = services.BuildServiceProvider();
@@ -47,5 +47,6 @@ public class CliParserTests {
         TestCommandParameters? parameters = service.Parameters;
         await Assert.That(parameters).IsNotNull();
         await Assert.That(parameters!.TestRequiredString).IsEqualTo("something");
+        await Assert.That(parameters.TestBool).IsTrue();
     }
 }
