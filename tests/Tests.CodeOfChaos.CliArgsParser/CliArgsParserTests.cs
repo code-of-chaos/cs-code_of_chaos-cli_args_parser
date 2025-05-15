@@ -21,6 +21,6 @@ public class CliParserTests {
         await parser.ExecuteAsync(input);
         
         // Assert
-
+        
     }
 }

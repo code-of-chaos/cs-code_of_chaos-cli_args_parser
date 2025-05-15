@@ -36,7 +36,7 @@ public record CommandDto(
 
         if (cliDataAttribute?.ConstructorArguments.ElementAtOrDefault(0).Value is string cliDataName) return cliDataName;
         return attributes.Any(attr => attr.IsDisplayName(TypeNames.AutoNameAttribute)) 
-            ? symbol.Name.ToKebabCase()
+            ? string.Join("", symbol.Name.ToKebabCase().Split('-').Select(s => s[0]))
             : "UNDEFINED";
     }
 

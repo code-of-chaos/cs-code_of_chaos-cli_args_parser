@@ -72,8 +72,14 @@ public class CommandGenerator : IIncrementalGenerator  {
         builder.AppendLine();
         builder.AppendLine($"public static class __{containingAssemblyName.Replace(".", "")}__CliArgsParserDictionary {{");
         builder.AppendLineIndented("public static readonly Dictionary<string, Type> Commands = new Dictionary<string, Type>() {");
-        builder.ForEachAppendLineIndented(data, dto => $"    {{ {dto.Name}, typeof({dto.Symbol.ToDisplayString()}) }},");
-        builder.ForEachAppendLineIndented(data, dto => $"    {{ {dto.ShortName}, typeof({dto.Symbol.ToDisplayString()}) }},");
+        builder.ForEachAppendLineIndented(
+            data.Where(d => d.Name != "UNDEFINED".ToQuotedString()),
+            dto => $"    {{ {dto.Name}, typeof({dto.Symbol.ToDisplayString()}) }},"
+        );
+        builder.ForEachAppendLineIndented(
+            data.Where(d => d.ShortName != "UNDEFINED".ToQuotedString()), 
+            dto => $"    {{ {dto.ShortName}, typeof({dto.Symbol.ToDisplayString()}) }},"
+        );
         builder.AppendLineIndented("};");
         builder.AppendLine("}");
         context.AddSource($"{containingAssemblyName}CliArgsParser.g.cs", builder.ToStringAndClear());
