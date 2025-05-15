@@ -4,6 +4,7 @@
 using CodeOfChaos.CliArgsParser.Generators.Helpers;
 using JetBrains.Annotations;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Immutable;
 using System.Linq;
@@ -49,8 +50,15 @@ public record ParameterDto([UsedImplicitly] IPropertySymbol Symbol) {
 
 
     public string GetWithPropertyDictionary() {
-        return IsRequired
-            ? $"parameterDictionary.GetParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})" 
-            : $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
+        if (IsRequired) return $"parameterDictionary.GetParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
+
+        if (PropertyType == "bool") return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
+        
+        string fallback = Symbol.DeclaringSyntaxReferences
+            .Select(r => r.GetSyntax())
+            .OfType<PropertyDeclarationSyntax>()
+            .FirstOrDefault()?.Initializer?.Value.ToString() ?? "default";
+
+        return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName}) ?? {fallback}";
     }
 }
