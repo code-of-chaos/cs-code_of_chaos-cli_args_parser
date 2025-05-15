@@ -54,11 +54,13 @@ public record ParameterDto([UsedImplicitly] IPropertySymbol Symbol) {
 
         if (PropertyType == "bool") return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
         
-        string fallback = Symbol.DeclaringSyntaxReferences
+        string? fallback = Symbol.DeclaringSyntaxReferences
             .Select(r => r.GetSyntax())
             .OfType<PropertyDeclarationSyntax>()
-            .FirstOrDefault()?.Initializer?.Value.ToString() ?? "default";
-
-        return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName}) ?? {fallback}";
+            .FirstOrDefault()?.Initializer?.Value.ToString();
+        
+        // ReSharper disable once ConvertIfStatementToReturnStatement
+        if (fallback is null) return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}>({Name}, {ShortName})";
+        return $"parameterDictionary.GetOptionalParameterByPossibleNames<{PropertyType}?>({Name}, {ShortName}) ?? {fallback}";
     }
 }
