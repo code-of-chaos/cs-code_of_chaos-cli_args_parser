@@ -19,19 +19,19 @@ public partial class CliParserBuilder : ICliParserBuilder {
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public ICliParserBuilder AddServices(IServiceProvider provider) {
+    public ICliParserBuilder WithServiceProvider(IServiceProvider provider) {
         ServiceProvider = () => provider;
         return this;
     }
     
-    public ICliParserBuilder AddServices(Func<IServiceProvider> provider) {
+    public ICliParserBuilder WithServiceProvider(Func<IServiceProvider> provider) {
         ServiceProvider = provider;
         return this;   
     }
 
-    public ICliParserBuilder AddCommandsFromAssembly<TEntrypoint>() => AddCommandsFromAssembly(typeof(TEntrypoint).Assembly);
+    public ICliParserBuilder AddFromAssembly<TEntrypoint>() => AddFromAssembly(typeof(TEntrypoint).Assembly);
     
-    public ICliParserBuilder AddCommandsFromAssembly(Assembly assembly) {
+    public ICliParserBuilder AddFromAssembly(Assembly assembly) {
         Type[] types = assembly.GetTypes();
         Type? staticDictionaryType = types.FirstOrDefault(t => FindCommandDictionary.IsMatch(t.Name) && t.IsClass);
         var commandsDictionary = staticDictionaryType?.GetField("Commands")?.GetValue(null) as Dictionary<string, Type>;

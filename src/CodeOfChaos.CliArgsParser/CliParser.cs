@@ -18,7 +18,7 @@ public partial class CliParser : ICliParser {
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
     internal CliParser() { }
-    public static CliParserBuilder FromBuilder() {
+    public static CliParserBuilder CreateBuilder() {
         return new CliParserBuilder();
     }
     

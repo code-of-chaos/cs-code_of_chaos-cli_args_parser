@@ -10,8 +10,8 @@ namespace Sample.CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 public static class Program {
     public static async Task Main(string[] args) {
-        ICliParser parser = CliParser.FromBuilder()
-            .AddCommandsFromAssembly<TestCommand>()
+        ICliParser parser = CliParser.CreateBuilder()
+            .AddFromAssembly<TestCommand>()
             .Build();
 
         await parser.ExecuteAsync(args);

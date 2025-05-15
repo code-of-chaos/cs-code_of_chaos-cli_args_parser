@@ -15,8 +15,8 @@ public class CliParserTests {
     public async Task ExecuteAsync_Test() {
         // Arrange
         const string input = "test-command --test-required-string=\"something\"";
-        ICliParser parser = CliParser.FromBuilder()
-            .AddCommandsFromAssembly(typeof(CliParserTests).Assembly)
+        ICliParser parser = CliParser.CreateBuilder()
+            .AddFromAssembly(typeof(CliParserTests).Assembly)
             .Build();
         
         // Act
@@ -34,9 +34,9 @@ public class CliParserTests {
         services.AddSingleton<IService, Service>();
         ServiceProvider provider = services.BuildServiceProvider();
         
-        ICliParser parser = CliParser.FromBuilder()
-            .AddServices(provider)
-            .AddCommandsFromAssembly(typeof(CliParserTests).Assembly)
+        ICliParser parser = CliParser.CreateBuilder()
+            .WithServiceProvider(provider)
+            .AddFromAssembly(typeof(CliParserTests).Assembly)
             .Build();
         
         // Act
