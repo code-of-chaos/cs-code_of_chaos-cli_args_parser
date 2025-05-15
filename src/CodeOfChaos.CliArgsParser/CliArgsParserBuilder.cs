@@ -1,8 +1,6 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using CodeOfChaos.Extensions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 

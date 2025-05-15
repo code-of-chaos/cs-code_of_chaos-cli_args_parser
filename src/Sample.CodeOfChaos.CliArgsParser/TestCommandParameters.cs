@@ -1,21 +1,16 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-using CodeOfChaos.CliArgsParser.OLD;
-using System.Threading.Tasks;
+using CodeOfChaos.CliArgsParser;
 
-namespace CodeOfChaos.CliArgsParser.Generators.Sample;
+namespace Sample.CodeOfChaos.CliArgsParser;
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public static class Program {
-    public static async Task Main(string[] args) {
-        OLD.CliArgsParser parser = CliArgsBuilder.CreateFromConfig(
-            config => {
-                config.AddCommand<TestCommand>();
-            }
-        ).Build();
-
-        await parser.ParseAsync(args);
-    }
+public record TestCommandParameters : ICliParameters{
+    [CliData, AutoName] public string TestString { get; init; }
+    [CliData, AutoName] public int TestInt { get; init; }
+    [CliData, AutoName] public bool TestBool { get; init; }
+    [CliData, AutoName] public required string TestRequiredString { get; init; }
 }

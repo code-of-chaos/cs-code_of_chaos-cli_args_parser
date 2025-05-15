@@ -1,12 +1,19 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-namespace CodeOfChaos.CliArgsParser.OLD;
+using CodeOfChaos.CliArgsParser;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Sample.CodeOfChaos.CliArgsParser;
+
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public record struct CommandData(
-    string Name,
-    string? Description,
-    Type Type
-);
+[CliData, AutoName]
+public partial class TestCommand : ICliCommand<TestCommandParameters> {
+    public async ValueTask ExecuteAsync(TestCommandParameters parameters, CancellationToken ct = default) {
+        throw new NotImplementedException();
+    }
+}

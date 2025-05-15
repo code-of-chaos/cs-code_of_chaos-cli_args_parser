@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{91B4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfChaos.CliArgsParser.Generators", "src\CodeOfChaos.CliArgsParser.Generators\CodeOfChaos.CliArgsParser.Generators.csproj", "{80E6494A-B679-4DDA-877C-F4639D4C60A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfChaos.CliArgsParser.Generators.Sample", "src\CodeOfChaos.CliArgsParser.Generators.Sample\CodeOfChaos.CliArgsParser.Generators.Sample.csproj", "{5791637A-68E9-4B82-9C2C-E295D0C3E94C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.CodeOfChaos.CliArgsParser", "src\Sample.CodeOfChaos.CliArgsParser\Sample.CodeOfChaos.CliArgsParser.csproj", "{5791637A-68E9-4B82-9C2C-E295D0C3E94C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.CodeOfChaos.CliArgsParser", "tests\Tests.CodeOfChaos.CliArgsParser\Tests.CodeOfChaos.CliArgsParser.csproj", "{181DA4AF-50BA-4C90-B678-EE394B22BFED}"
 EndProject

@@ -1,13 +1,19 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
-namespace CodeOfChaos.CliArgsParser.OLD;
+using CodeOfChaos.CliArgsParser;
+using System.Threading.Tasks;
+
+namespace Sample.CodeOfChaos.CliArgsParser;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-public interface ICommand<in T> :
-    // Ah blessed be the workarounds.
-    INonGenericCommandInterfaces
-    where T : struct, IParameters {
-    Task ExecuteAsync(T parameters);
+public static class Program {
+    public static async Task Main(string[] args) {
+        var parser = CliParser.FromBuilder()
+            .AddCommandsFromAssembly<TestCommand>()
+            .Build();
+
+        await parser.ExecuteAsync(args);
+    }
 }
