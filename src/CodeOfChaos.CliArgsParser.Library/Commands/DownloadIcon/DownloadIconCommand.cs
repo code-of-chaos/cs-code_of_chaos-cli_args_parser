@@ -2,7 +2,6 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser.Library.Shared;
-using CodeOfChaos.CliArgsParser.OLD;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -10,9 +9,9 @@ namespace CodeOfChaos.CliArgsParser.Library.Commands.DownloadIcon;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-[CliArgsCommand("nuget-download-icon")]
-[CliArgsDescription("Downloads and assigns the icon, to be used as nuget package's icon, for the specified project.")]
-public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
+[CliData("nuget-download-icon")]
+// [CliArgsDescription("Downloads and assigns the icon, to be used as nuget package's icon, for the specified project.")]
+public partial class DownloadIconCommand : ICliCommand<DownloadIconParameters> {
 
     [GeneratedRegex(@"^[^/\\\s]+$")]
     private static partial Regex IsEmptyFolderNameRegex { get; }
@@ -20,7 +19,7 @@ public partial class DownloadIconCommand : ICommand<DownloadIconParameters> {
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public async Task ExecuteAsync(DownloadIconParameters parameters) {
+    public async ValueTask ExecuteAsync(DownloadIconParameters parameters, CancellationToken ct = default) {
         Console.WriteLine("Downloading Icon...");
         bool getResult = await TryGetIcon(parameters);
         if (!getResult) {

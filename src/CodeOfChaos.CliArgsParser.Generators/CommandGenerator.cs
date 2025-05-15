@@ -63,6 +63,7 @@ public class CommandGenerator : IIncrementalGenerator  {
             "System",
             "System.Threading",
             "System.Threading.Tasks",
+            "System.Collections.Generic",
             "CodeOfChaos.CliArgsParser"
         );
         

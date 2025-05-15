@@ -2,22 +2,21 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser.Library.Shared;
-using CodeOfChaos.CliArgsParser.OLD;
 using System.Xml.Linq;
 
 namespace CodeOfChaos.CliArgsParser.Library.Commands.VersionBump;
 // ---------------------------------------------------------------------------------------------------------------------
 // Code
 // ---------------------------------------------------------------------------------------------------------------------
-[CliArgsCommand("git-version-bump")]
-[CliArgsDescription("Bumps the version of the projects specified in the projects argument.")]
-public partial class VersionBumpCommand : ICommand<VersionBumpParameters> {
+[CliData("git-version-bump")]
+// [CliArgsDescription("Bumps the version of the projects specified in the project argument.")]
+public partial class VersionBumpCommand : ICliCommand<VersionBumpParameters> {
     private static readonly List<string> ErrorMessages = [];
 
     // -----------------------------------------------------------------------------------------------------------------
     // Methods
     // -----------------------------------------------------------------------------------------------------------------
-    public async Task ExecuteAsync(VersionBumpParameters parameters) {
+    public async ValueTask ExecuteAsync(VersionBumpParameters parameters, CancellationToken ct = default) {
         Console.WriteLine(ConsoleTextStore.BumpingVersion);
         SemanticVersionDto? updatedVersion = await BumpVersion(parameters);
         if (updatedVersion is null) {

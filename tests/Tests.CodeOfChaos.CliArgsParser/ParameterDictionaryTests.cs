@@ -2,7 +2,6 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser;
-using CodeOfChaos.CliArgsParser.OLD;
 using JetBrains.Annotations;
 
 namespace Tests.CodeOfChaos.CliArgsParser;

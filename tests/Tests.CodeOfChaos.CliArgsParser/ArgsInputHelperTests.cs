@@ -2,7 +2,6 @@
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
 using CodeOfChaos.CliArgsParser;
-using CodeOfChaos.CliArgsParser.OLD;
 
 namespace Tests.CodeOfChaos.CliArgsParser;
 
