@@ -13,7 +13,7 @@ public partial class ParameterDictionary : IParameterDictionary {
     private uint _quotedStringCounter;
 
     [GeneratedRegex("""
-    (?<keyValue>(?<key>--[\w\-_]+|-[\w\-_])\s*=\s*(?<value>\\?"[^"]*\\?"))
+    (?<keyValue>(?<key>--[\w\-_]+|-[\w\-_])\s*=\s*(?<value>\\?"[^"]*\\?"|\w+))
     |(?<flag>(?:--[\w\-_]+|-[\w\-_])(?=\s|$))
     |(?<quotedString>\\?"(?<quoted>[^"]*)\\?")
     |(?<positional>\S+)

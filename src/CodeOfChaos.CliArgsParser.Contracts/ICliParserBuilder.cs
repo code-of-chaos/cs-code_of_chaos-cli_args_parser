@@ -1,6 +1,8 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
+using System.Reflection;
+
 namespace CodeOfChaos.CliArgsParser;
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -9,6 +11,8 @@ namespace CodeOfChaos.CliArgsParser;
 public interface ICliParserBuilder {
     ICliParserBuilder AddServices(IServiceProvider provider);
     ICliParserBuilder AddServices(Func<IServiceProvider> provider);
+    ICliParserBuilder AddCommandsFromAssembly<TEntrypoint>();
+    ICliParserBuilder AddCommandsFromAssembly(Assembly assembly);
     
     ICliParser Build();
 }

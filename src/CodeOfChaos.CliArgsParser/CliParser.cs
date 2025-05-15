@@ -1,6 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.RegularExpressions;
 
 namespace CodeOfChaos.CliArgsParser;
@@ -37,10 +38,11 @@ public partial class CliParser : ICliParser {
         string parameterInput = string.Join(" ", tokens.Skip(1));
 
         if (!CommandProvider.TryGetCommand(commandName, out Type? commandType)) throw new Exception("no Command found");
-
+        
         ICliCommand? command = ServiceProvider is not null
-            ? Activator.CreateInstance(commandType, ServiceProvider.Value) as ICliCommand
+            ? (ICliCommand?)ActivatorUtilities.CreateInstance(ServiceProvider.Value, commandType)
             : Activator.CreateInstance(commandType) as ICliCommand;
+
         
         if (command is null) throw new Exception("no Command found");
         
