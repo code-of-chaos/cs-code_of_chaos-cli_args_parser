@@ -1,6 +1,7 @@
 ﻿// ---------------------------------------------------------------------------------------------------------------------
 // Imports
 // ---------------------------------------------------------------------------------------------------------------------
+using CodeOfChaos.GeneratorTools;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
