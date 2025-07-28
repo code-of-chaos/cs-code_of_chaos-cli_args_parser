@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>CodeOfChaos.CliArgsParser</id>
-        <version>5.0.0-preview.8</version>
-        <authors>Anna Sas</authors>
-        <description>CliArgsParser is a library built around Dependency Injection to allow you to create CLI tools with ease</description>
-    </metadata>
-</package>
