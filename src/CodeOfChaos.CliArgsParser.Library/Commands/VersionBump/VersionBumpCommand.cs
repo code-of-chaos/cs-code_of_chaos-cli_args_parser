@@ -82,39 +82,92 @@ public partial class VersionBumpCommand : ICliCommand<VersionBumpParameters> {
         VersionSection sectionToBump = args.Section;
         SemanticVersionDto? versionDto = null;
 
+        // Process csproj files
         await foreach (XDocument document in CsProjHelpers.GetProjectFiles(projectFiles)) {
-            XElement? versionElement = document
-                .Descendants("PropertyGroup")
-                .Elements("Version")
-                .FirstOrDefault();
-
-            // Only needed for logging, so setting to "UNKNOWN" is okay
-            string projectName = document
-                .Descendants("PropertyGroup")
-                .Elements("PackageId")
-                .FirstOrDefault()?
-                .Value ?? "UNKNOWN";
-
-            if (versionElement == null) {
-                ErrorMessages.Add($"File {projectName} did not contain a version element");
-                continue;
+            string projectName = GetProjectNameFromCsproj(document);
+            
+            SemanticVersionDto? result = ProcessCsprojFile(document, projectName, versionDto, sectionToBump);
+            if (result is not null) {
+                versionDto = result;
             }
-
-            if (versionDto is null) {
-                if (!SemanticVersionDto.TryParse(versionElement.Value, out SemanticVersionDto? dto)) {
-                    ErrorMessages.Add($"File {projectName} contained an invalid version element: {versionElement.Value}");
-                    continue;
-                }
-
-                dto.BumpVersion(sectionToBump);
-
-                versionDto = dto;
-            }
-
-            versionElement.Value = versionDto.ToString();
-            Console.WriteLine(ConsoleTextStore.UpdatedVersion(projectName, versionElement.Value));
         }
+
+        // Process nuspec files
+        await ProcessNuspecFiles(projectFiles, versionDto);
 
         return versionDto;
     }
+
+    private static SemanticVersionDto? ProcessCsprojFile(XDocument document, string projectName, SemanticVersionDto? currentVersion, VersionSection sectionToBump) {
+        XElement? versionElement = document
+            .Descendants("PropertyGroup")
+            .Elements("Version")
+            .FirstOrDefault();
+
+        if (versionElement == null) {
+            ErrorMessages.Add($"File {projectName} did not contain a version element");
+            return null;
+        }
+
+        SemanticVersionDto? versionDto = currentVersion;
+        
+        if (versionDto is null) {
+            if (!SemanticVersionDto.TryParse(versionElement.Value, out SemanticVersionDto? dto)) {
+                ErrorMessages.Add($"File {projectName} contained an invalid version element: {versionElement.Value}");
+                return null;
+            }
+
+            dto.BumpVersion(sectionToBump);
+            versionDto = dto;
+        }
+
+        versionElement.Value = versionDto.ToString();
+        Console.WriteLine(ConsoleTextStore.UpdatedVersion(projectName, versionElement.Value));
+        return versionDto;
+    }
+
+    private static async Task ProcessNuspecFiles(string[] projectFiles, SemanticVersionDto? versionDto) {
+        if (versionDto == null) return;
+
+        foreach (string projectFile in projectFiles) {
+            string nuspecFile = Path.ChangeExtension(projectFile, ".nuspec");
+            if (!File.Exists(nuspecFile)) continue;
+
+            try {
+                XDocument nuspecDocument;
+                await using (var stream = new FileStream(nuspecFile, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true)) {
+                    nuspecDocument = await XDocument.LoadAsync(stream, LoadOptions.PreserveWhitespace, CancellationToken.None);
+                }
+                
+                XNamespace ns = nuspecDocument.Root?.GetDefaultNamespace() ?? XNamespace.None;
+                XElement? versionElement = nuspecDocument
+                    .Descendants(ns + "metadata")
+                    .Elements(ns + "version")
+                    .FirstOrDefault();
+
+                if (versionElement != null) {
+                    versionElement.Value = versionDto.ToString();
+                    
+                    // Save the nuspec file
+                    await using var stream = new FileStream(nuspecFile, FileMode.Create, FileAccess.Write);
+                    await nuspecDocument.SaveAsync(stream, SaveOptions.None, CancellationToken.None);
+                    
+                    string nuspecName = Path.GetFileNameWithoutExtension(nuspecFile);
+                    Console.WriteLine(ConsoleTextStore.UpdatedVersion(nuspecName, versionElement.Value));
+                }
+            }
+            catch (Exception ex) {
+                ErrorMessages.Add($"Failed to process nuspec file {nuspecFile}: {ex.Message}");
+            }
+        }
+    }
+
+    private static string GetProjectNameFromCsproj(XDocument document) {
+        return document
+            .Descendants("PropertyGroup")
+            .Elements("PackageId")
+            .FirstOrDefault()?
+            .Value ?? "UNKNOWN";
+    }
+
 }
