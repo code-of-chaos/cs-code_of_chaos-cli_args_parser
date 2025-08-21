@@ -33,7 +33,7 @@
 
     <ItemGroup>
       <PackageReference Include="CodeOfChaos.Extensions" Version="0.70.1" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.7" />
     </ItemGroup>
 
