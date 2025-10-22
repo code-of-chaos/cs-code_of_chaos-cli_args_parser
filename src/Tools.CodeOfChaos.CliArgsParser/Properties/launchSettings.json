@@ -13,7 +13,7 @@
     "Version Bump : Patch": {
       "_readme": "will update the 'patch' section of the semantic version (0.0.x)",
       "commandName": "Project",
-      "commandLineArgs": "git-version-bump --section=\"patch\" --projects=\"%PROJECTS%\" --push  --root=\"..\\..\\\""
+      "commandLineArgs": "git-version-bump --section=\"patch\" --projects=\"%PROJECTS%\" --push  --root=\"..\\..\\..\\..\\..\\\""
     },
     "Version Bump : Preview": {
       "_readme": "will update the 'preview' section of the semantic version (0.0.0-preview.x)",
