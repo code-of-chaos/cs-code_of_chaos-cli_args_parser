@@ -22,6 +22,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.CodeOfChaos.CliArgsPa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfChaos.CliArgsParser.Contracts", "src\CodeOfChaos.CliArgsParser.Contracts\CodeOfChaos.CliArgsParser.Contracts.csproj", "{0B047200-48C2-4A8F-BAB2-51E387F9541E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".dev-tools", ".dev-tools", "{0AF396D5-7EE1-42C5-8E67-376D7BB92749}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{38D95A73-1C54-4547-A741-F8F08170EDAA}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\onPullRequest-TestDotnet.yml = .github\workflows\onPullRequest-TestDotnet.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+		.github\workflows\workflow-todo.yml = .github\workflows\workflow-todo.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,5 +74,6 @@ Global
 		{5791637A-68E9-4B82-9C2C-E295D0C3E94C} = {91B440FF-0570-4FF5-9AE9-5DD272DFD139}
 		{181DA4AF-50BA-4C90-B678-EE394B22BFED} = {8DD280D4-1E14-4D5E-AFE6-58DD8F079DCC}
 		{0B047200-48C2-4A8F-BAB2-51E387F9541E} = {197E72AD-DEAB-4350-AFC3-A3BB38720BF5}
+		{38D95A73-1C54-4547-A741-F8F08170EDAA} = {0AF396D5-7EE1-42C5-8E67-376D7BB92749}
 	EndGlobalSection
 EndGlobal
