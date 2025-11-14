@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/.dev-tools/">
+    <File Path="Directory.Packages.props" />
+    <Project Path="src/Tools.CodeOfChaos.CliArgsParser/Tools.CodeOfChaos.CliArgsParser.csproj" />
+  </Folder>
+  <Folder Name="/.dev-tools/github/">
+    <File Path=".github/workflows/onPullRequest-TestDotnet.yml" />
+    <File Path=".github/workflows/release.yml" />
+    <File Path=".github/workflows/workflow-todo.yml" />
+  </Folder>
+  <Folder Name="/example/">
+    <Project Path="src/Sample.CodeOfChaos.CliArgsParser/Sample.CodeOfChaos.CliArgsParser.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/CodeOfChaos.CliArgsParser.Contracts/CodeOfChaos.CliArgsParser.Contracts.csproj" />
+    <Project Path="src/CodeOfChaos.CliArgsParser.Generators/CodeOfChaos.CliArgsParser.Generators.csproj" />
+    <Project Path="src/CodeOfChaos.CliArgsParser.Library/CodeOfChaos.CliArgsParser.Library.csproj" />
+    <Project Path="src/CodeOfChaos.CliArgsParser/CodeOfChaos.CliArgsParser.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Tests.CodeOfChaos.CliArgsParser/Tests.CodeOfChaos.CliArgsParser.csproj" />
+  </Folder>
+</Solution>

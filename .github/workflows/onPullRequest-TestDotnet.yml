@@ -17,13 +17,15 @@ jobs:
             - name: Setup .NET
               uses: actions/setup-dotnet@v5
               with:
-                  dotnet-version: '9.x'
+                  dotnet-version: |
+                    9.x
+                    10.x
 
             - name: Restore dependencies
-              run: dotnet restore CodeOfChaos.CliArgsParser.sln
+              run: dotnet restore CodeOfChaos.CliArgsParser.slnx
 
             - name: Build
-              run: dotnet build CodeOfChaos.CliArgsParser.sln --configuration Release --no-restore -p:GeneratePackageOnBuild=false -p:IsPackable=false
+              run: dotnet build CodeOfChaos.CliArgsParser.slnx --configuration Release --no-restore -p:GeneratePackageOnBuild=false -p:IsPackable=false
 
             - name: Run tests
-              run: dotnet test CodeOfChaos.CliArgsParser.sln --configuration Release --no-restore --no-build
+              run: dotnet test CodeOfChaos.CliArgsParser.slnx --configuration Release --no-restore --no-build
