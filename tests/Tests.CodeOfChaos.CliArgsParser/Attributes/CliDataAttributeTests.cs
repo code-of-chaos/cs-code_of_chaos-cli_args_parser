@@ -36,15 +36,15 @@ public class CliDataAttributeTests {
         
         // Assert
         await Assert.That(withoutData)
-            .HasProperty(x => x.Name).IsEqualTo(null)
-            .HasProperty(x => x.ShortName).IsEqualTo(null);
+            .HasProperty(x => x.Name).IsNull()
+            .HasProperty(x => x.ShortName).IsNull();
         
         await Assert.That(shouldSetName)
             .HasProperty(x => x.Name).IsEqualTo("name")
-            .HasProperty(x => x.ShortName).IsEqualTo(null);
+            .HasProperty(x => x.ShortName).IsNull();
         
         await Assert.That(shouldSetShortName)
-            .HasProperty(x => x.Name).IsEqualTo(null)
+            .HasProperty(x => x.Name).IsNull()
             .HasProperty(x => x.ShortName).IsEqualTo("short");
         
         await Assert.That(shouldSetNameAndShortName)

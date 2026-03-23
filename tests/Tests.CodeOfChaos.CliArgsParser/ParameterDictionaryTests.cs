@@ -51,7 +51,7 @@ public class ParameterDictionaryTests {
 
         // Assert
         await Assert.That(flag as object).IsNotNull().Because("The parameter should exist");
-        await Assert.That(flag).IsEqualTo(true);
+        await Assert.That(flag).IsTrue();
     }
 
     [Test]
@@ -140,7 +140,7 @@ public class ParameterDictionaryTests {
         await Assert.That(key2).IsEqualTo("value2");
 
         await Assert.That(shortFlag as object).IsNotNull().Because("The flag '-f' should be a valid boolean value");
-        await Assert.That(shortFlag).IsEqualTo(true);
+        await Assert.That(shortFlag).IsTrue();
 
         await Assert.That(quotedString).IsNotNull().Because("The quoted string should be parsed correctly");
         await Assert.That(quotedString).IsEqualTo("This is a test");
@@ -152,10 +152,10 @@ public class ParameterDictionaryTests {
         await Assert.That(positional1).IsEqualTo("arg2");
 
         await Assert.That(boolFlag as object).IsNotNull().Because("The boolean flag 'boolFlag' should exist");
-        await Assert.That(boolFlag).IsEqualTo(true);
+        await Assert.That(boolFlag).IsTrue();
 
         await Assert.That(negativeFlag as object).IsNotNull().Because("The boolean flag 'negativeFlag' should exist");
-        await Assert.That(negativeFlag).IsEqualTo(false);
+        await Assert.That(negativeFlag).IsFalse();
     }
 
     [Test]
@@ -237,7 +237,7 @@ public class ParameterDictionaryTests {
         bool flag = registry.GetParameterByPossibleNames<bool>("--flag", "-f");
 
         // Assert
-        await Assert.That(flag).IsEqualTo(true);
+        await Assert.That(flag).IsTrue();
     }
 
     [Test]
@@ -249,7 +249,7 @@ public class ParameterDictionaryTests {
         bool? flag = registry.GetOptionalParameterByPossibleNames<bool>("--flag", "-f");
 
         // Assert
-        await Assert.That(flag).IsEqualTo(true);
+        await Assert.That(flag).IsTrue();
     }
 
     [Test]
